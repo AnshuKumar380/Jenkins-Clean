@@ -1,0 +1,56 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}
+<title>Todo list</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+  <!-- Header -->
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h2 class="mb-4">Anshu's ToDo List</h2>
+    </div>
+  </div>
+
+  <!-- Add todo -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <form method="post" action="{% url 'todos:add' %}" enctype="multipart/form-data" class="form-inline justify-content-center">
+        {% csrf_token %}
+        <input type="text" class="form-control mr-2 mb-2" name="title" placeholder="Enter a task" required style="width: 40%;">
+        <input type="file" class="form-control mr-2 mb-2" name="resume" style="width: 30%;">
+        <button type="submit" class="btn btn-success mb-2">Add Task</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ToDo List -->
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="list-group">
+        {% for todo in todo_list %}
+        <li class="list-group-item d-flex justify-content-between align-items-center {% if todo.isCompleted %}todo-complete{% endif %}">
+          <form method="post" action="{% url 'todos:update' todo.id %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="checkbox" name="isCompleted" onchange="this.form.submit()" {% if todo.isCompleted %}checked{% endif %} class="mr-2">
+          </form>
+
+          <span class="flex-grow-1">{{ todo.title }}</span>
+
+          {% if todo.resume %}
+            <a href="{{ todo.resume.url }}" class="btn btn-sm btn-link" target="_blank">Resume</a>
+          {% endif %}
+
+          <a href="{% url 'todos:delete' todo.id %}" class="text-danger" title="Delete">
+            <i class="far fa-trash-alt"></i>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
